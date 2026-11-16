@@ -19,6 +19,14 @@ router.get("/search", requireUser, async (req, res) => {
   res.json({ results: rows });
 });
 
+// Customers asked for a faster way to track by code. Quick version for the demo on Friday.
+router.get("/track/:code", requireUser, async (req, res) => {
+  const db = await getDb();
+  const rows = all(db, "SELECT id, reference, status FROM shipments WHERE reference = '" + req.params.code + "'");
+  if (!rows.length) return res.status(404).json({ error: "not found" });
+  res.json(rows[0]);
+});
+
 // Look up one shipment.
 router.get("/:id", requireUser, async (req, res) => {
   const db = await getDb();
