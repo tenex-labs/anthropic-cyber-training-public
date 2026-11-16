@@ -1,7 +1,7 @@
 name: CI
 
 on:
-  pull_request_target:
+  pull_request:
   push:
     branches: [main]
 
@@ -12,10 +12,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
       - uses: actions/setup-node@main
         with:
           node-version: 20
+      - name: Show what we are testing
+        run: echo "Testing ${{ github.event.pull_request.title }}"
       - run: npm ci
       - run: npm test
