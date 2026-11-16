@@ -1,0 +1,45 @@
+# Workshop security check. Runs a Claude security review on every pull request.
+# Managed by the workshop hosts. It uses the version on main, so changes in a PR do not affect it.
+name: Security review
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: security-review-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  review:
+    # Hosts switch this on for the event only (repo variable REVIEW_ENABLED = true).
+    if: vars.REVIEW_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    # The API key lives in this environment, which only main can use.
+    environment: security-review
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 2
+          persist-credentials: false
+
+      - id: review
+        uses: anthropics/claude-code-security-review@0c6a49f1fa56a1d472575da86a94dbc1edb78eda # main, Nov 2026
+        with:
+          claude-api-key: ${{ secrets.CLAUDE_API_KEY }}
+          claude-model: ${{ vars.REVIEW_MODEL }}
+          comment-pr: true
+          claudecode-timeout: 10
+          exclude-directories: node_modules,uploads
+
+      - name: Block the merge if the review found problems
+        if: steps.review.outputs.findings-count != '0'
+        run: |
+          echo "The security review found ${{ steps.review.outputs.findings-count }} issue(s). See the PR comments."
+          exit 1
