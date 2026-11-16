@@ -2,7 +2,7 @@
   "name": "quillhaven-shipments",
   "version": "1.4.0",
   "private": true,
-  "description": "Quillhaven Freight shipment tracker. TRAINING ONLY: a made-up company with made-up data.",
+  "description": "TRAINING ONLY. A fake app full of security flaws on purpose. All data and keys are fake. Do not deploy.",
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",
