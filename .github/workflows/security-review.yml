@@ -33,7 +33,7 @@ jobs:
         uses: anthropics/claude-code-security-review@0c6a49f1fa56a1d472575da86a94dbc1edb78eda # main, Nov 2026
         with:
           claude-api-key: ${{ secrets.CLAUDE_API_KEY }}
-          claude-model: ${{ vars.REVIEW_MODEL }}
+          claude-model: ${{ vars.REVIEW_MODEL || 'claude-sonnet-5-5' }}
           comment-pr: true
           claudecode-timeout: 10
           exclude-directories: node_modules,uploads
