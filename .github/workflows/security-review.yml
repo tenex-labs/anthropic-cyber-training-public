@@ -4,7 +4,8 @@ name: Security review
 
 on:
   pull_request_target:
-    types: [opened, synchronize, reopened]
+    # Runs once when a PR opens (or reopens), to keep the cost of a 100-person event down.
+    types: [opened, reopened]
 
 permissions:
   contents: read
